@@ -29,7 +29,7 @@ var Flocking = (function () {
 
 	function start() {
 		
-		for (var i = 0; i < 50; i++) {
+		for (var i = 0; i < 103; i++) {
 			flock.push(new Boid(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 350, Math.random() * 360, 10));
 		}
 		// console.log(JSON.stringify(flock));
