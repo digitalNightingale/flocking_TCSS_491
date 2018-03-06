@@ -35,7 +35,7 @@ To carry out this assignment follow these steps:
       - Connect using socket.io to my server
       - Use the emit method to send  save  and  load  messages to the server.
       - In  save  and  load  messages the data object must have the two fields:
-          i. studentname = “Your Name”
-          ii. statename = “some identifier”
+          -i. studentname = “Your Name”
+          -ii. statename = “some identifier”
       - In save messages include other fields with the state data.
       - Respond to load messages from the server by loading the data that was previously saved.
