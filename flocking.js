@@ -8,16 +8,6 @@
  * Winter 2018
 */
 
-//var socket = io.connect("http://24.16.255.56:8888");
-
-// socket.on("load", function (data) {
-//     console.log(data);
-// });
-
-// socket.emit("save", { studentname: "Leah Ruisenor", statename: "aState", data: flock });
-// socket.emit("load", { studentname: "Leah Ruisenor", statename: "aState" });
-
-
 var Flocking = (function () {
 
 	var canvas = document.getElementById("flocking");
@@ -26,7 +16,7 @@ var Flocking = (function () {
 	canvas.height = 800;
 	canvas.width = 1280;
 
-	var flock = [];
+	// var flock = [];
 	var flockRadius = 250;
 
 	var Boid = function (x, y, z, front, size) {
@@ -38,10 +28,19 @@ var Flocking = (function () {
 	};
 
 	function start() {
-
+		
 		for (var i = 0; i < 50; i++) {
 			flock.push(new Boid(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 350, Math.random() * 360, 10));
 		}
+		// console.log(JSON.stringify(flock));
+		setInterval(boidLogic, 1000/60);
+	}
+
+	this.start = start;
+
+	var startSavedState = function () {
+
+		// console.log(JSON.stringify(flock));
 		setInterval(boidLogic, 1000/60);
 	}
 
@@ -118,32 +117,26 @@ var Flocking = (function () {
 
 			ctx.beginPath();
 			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
-			ctx.lineTo((boid.x + (boid.size / 2)) - directionOfX(9, flock[i].front), (boid.y + (boid.size / 2)) - directionOfY(9, flock[i].front));
+			ctx.lineTo((boid.x + (boid.size / 2)) + directionOfX(5, flock[i].front), (boid.y + (boid.size / 2)) + directionOfY(5, flock[i].front));
+			ctx.strokeStyle = "black" // head
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
+			ctx.lineTo((boid.x + (boid.size / 2)) - directionOfX(7, flock[i].front), (boid.y + (boid.size / 2)) - directionOfY(7, flock[i].front));
 			ctx.strokeStyle = "black" // tail
 			ctx.stroke();
 
 			ctx.beginPath();
 			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
-			ctx.lineTo((boid.x - (boid.size / 2)) - directionOfX(5, flock[i].front), (boid.y - (boid.size / 2)) - directionOfY(5, flock[i].front));
-			ctx.strokeStyle = "black" // first wing
+			ctx.lineTo((boid.x + (boid.size / 2)) + directionOfX(8, flock[i].front), (boid.y - (boid.size / 2)) - directionOfY(8, flock[i].front));
+			ctx.strokeStyle = "black" // right wing
 			ctx.stroke();
 
 			ctx.beginPath();
 			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
-			ctx.lineTo((boid.x - (boid.size / 2)) - directionOfX(5, flock[i].front), (boid.y + (boid.size / 2)) - directionOfY(5, flock[i].front));
-			ctx.strokeStyle = "black" // next wing
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
-			ctx.lineTo((boid.x + (boid.size / 2)) - directionOfX(5, flock[i].front), (boid.y - (boid.size / 2)) - directionOfY(5, flock[i].front));
-			ctx.strokeStyle = "black" // next wing
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.moveTo(boid.x + (boid.size / 2), boid.y + (boid.size / 2));
-			ctx.lineTo((boid.x + (boid.size / 2)) + directionOfX(5, flock[i].front), (boid.y + (boid.size / 2)) + directionOfY(5, flock[i].front));
-			ctx.strokeStyle = "black" // head
+			ctx.lineTo((boid.x - (boid.size / 2)) - directionOfX(8, flock[i].front), (boid.y + (boid.size / 2)) + directionOfY(8, flock[i].front));
+			ctx.strokeStyle = "black" // left wing
 			ctx.stroke();
 		}
 	}
@@ -174,7 +167,39 @@ var Flocking = (function () {
 	function directionOfY(length, angle) {
 		return length * Math.sin(degreesToRadians(angle));
 	}
-	
-	start();
+
+	return this;
 
 })();
+
+/*********************
+ *  Main Starts Here *
+ *********************/
+
+var flock = [];
+var socket = io.connect("http://24.16.255.56:8888");
+
+Flocking.start();
+
+socket.on("load", function (data) {
+
+	//console.log("this is a test");
+	data = JSON.parse(data['data']);
+	flock = data;
+	//console.log(JSON.stringify(flock));	
+	Flocking.startSavedState;
+
+});
+
+function save_simulation(ev) {
+
+	socket.emit("save", { studentname: "Leah Ruisenor", statename: "aState", data: JSON.stringify(flock) });
+	//console.log("this is a save test");
+	//console.log(JSON.stringify(flock));
+}
+
+function load_simulation(ev) {
+
+	socket.emit("load", { studentname: "Leah Ruisenor", statename: "aState" });
+	//console.log("this is a load test");
+}
