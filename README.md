@@ -32,10 +32,10 @@ To carry out this assignment follow these steps:
    of agents) is needed to fully recreate the state of the animation.
 
 3. Connect to the Database - To connect to the database you will need to:
-      ○ Connect using socket.io to my server
-      ○ Use the emit method to send  save  and  load  messages to the server.
-      ○ In  save  and  load  messages the data object must have the two fields:
+      - Connect using socket.io to my server
+      - Use the emit method to send  save  and  load  messages to the server.
+      - In  save  and  load  messages the data object must have the two fields:
           i. studentname = “Your Name”
           ii. statename = “some identifier”
-      ○ In save messages include other fields with the state data.
-      ○ Respond to load messages from the server by loading the data that was previously saved.
+      - In save messages include other fields with the state data.
+      - Respond to load messages from the server by loading the data that was previously saved.
